@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -36,12 +38,15 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.dribbleuipractise.BottomMenuContent
 import com.example.dribbleuipractise.Feature
 import com.example.dribbleuipractise.R
 import com.example.dribbleuipractise.standardQuadFromTo
+import com.example.dribbleuipractise.theme.AquaBlue
 import com.example.dribbleuipractise.theme.Beige1
 import com.example.dribbleuipractise.theme.Beige2
 import com.example.dribbleuipractise.theme.Beige3
@@ -127,6 +132,16 @@ fun HomeScreen() {
                 )
             )
         }
+        BottomMenu(
+            items = listOf(
+                BottomMenuContent("Home", R.drawable.ic_home, "HomeIcon"),
+                BottomMenuContent("Meditate", R.drawable.ic_bubble, "MeditateIcon"),
+                BottomMenuContent("Sleep", R.drawable.ic_moon, "SleepIcon"),
+                BottomMenuContent("Music", R.drawable.ic_music, "MusicIcon"),
+                BottomMenuContent("Profile", R.drawable.ic_profile, "ProfileIcon"),
+            ), modifier = Modifier
+                .align(Alignment.BottomCenter)
+        )
     }
 }
 
@@ -161,6 +176,83 @@ fun GreetingSection(
             tint = TextWhite,
             contentDescription = "Search Icon",
             painter = painterResource(id = R.drawable.ic_search)
+        )
+    }
+}
+
+
+@Composable
+fun BottomMenu(
+    items: List<BottomMenuContent>,
+    usedBtnColor: Color = ButtonBlue,
+    modifier: Modifier = Modifier,
+    usedTextColor: Color = TextWhite,
+    defaultTextColor: Color = AquaBlue,
+    initialSelectedItemIndex: Int = 0
+) {
+    var selectedItemIndex by remember {
+        mutableStateOf(initialSelectedItemIndex)
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround,
+        modifier = modifier
+            .fillMaxWidth()
+            .background(DeepBlue)
+            .height(100.dp)
+    ) {
+        items.forEachIndexed { index, item ->
+            BottomMenuItem(
+                item = item,
+                isSelected = selectedItemIndex == index
+            ) {
+                selectedItemIndex = index
+            }
+        }
+    }
+
+}
+
+@Composable
+fun BottomMenuItem(
+    item: BottomMenuContent,
+    isSelected: Boolean = false,
+    usedBtnColor: Color = ButtonBlue,
+    usedTextColor: Color = TextWhite,
+    defaultTextColor: Color = AquaBlue,
+    onItemClick: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable {
+            onItemClick()
+        }
+    ) {
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(30.dp))
+                .background(if (isSelected) usedBtnColor else Color.Transparent)
+                .padding(10.dp)
+            /*.height(30.dp)
+            .width(30.dp),*/,
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = item.IconId),
+                contentDescription = item.contentDescription,
+                tint = if (isSelected) Color.White else defaultTextColor,
+                modifier = Modifier.size(20.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = item.title,
+            style = TextStyle(
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Light,
+                color = if (isSelected) usedTextColor else defaultTextColor
+            )
         )
     }
 }
